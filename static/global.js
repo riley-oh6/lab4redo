@@ -3,7 +3,7 @@ function $$ (selector, context = document) {
 }
 console.log("IT’S ALIVE!");
 let pages = {
-    "./": "Home",
+    ".": "Home",
     "projects": "Projects",
     "resume": "Resume",
     "contact": "Contact",
