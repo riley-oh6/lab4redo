@@ -2,6 +2,7 @@
 	<title>Home Page</title>
 </svelte:head>
 
+
 <script>
     import projects from '$lib/projects.json';
     import Project from "$lib/Project.svelte";
@@ -21,7 +22,7 @@
     </h2>
     <div>
         {#each projects.slice(0,3) as p}
-            <Project info={p} />
+            <Project info={p} hLevel=3/>
         {/each}
     </div>
 </body>

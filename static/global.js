@@ -18,7 +18,7 @@ for (let url in pages) {
 	const ARE_WE_HOME = document.documentElement.classList.contains("home");
 	console.log(ARE_WE_HOME);
     let title = pages[url];
-    url = ARE_WE_HOME && !url.startsWith("http") ? url : "../" + url;
+    // url = ARE_WE_HOME && !url.startsWith("http") ? url : "../" + url;
     let a = document.createElement("a");
     a.href = url;
     a.textContent = title;
