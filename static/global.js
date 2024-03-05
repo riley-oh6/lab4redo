@@ -4,9 +4,9 @@ function $$ (selector, context = document) {
 console.log("IT’S ALIVE!");
 let pages = {
     "./": "Home",
-    "projects": "Projects",
-    "resume": "Resume",
-    "contact": "Contact",
+    "/projects": "Projects",
+    "/resume": "Resume",
+    "/contact": "Contact",
 };
 
 let nav = document.createElement("nav");
