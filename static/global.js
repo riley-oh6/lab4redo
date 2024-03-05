@@ -3,10 +3,10 @@ function $$ (selector, context = document) {
 }
 console.log("IT’S ALIVE!");
 let pages = {
-    "/lab4redo/": "Home",
-    "/lab4redo/projects": "Projects",
-    "/lab4redo/resume": "Resume",
-    "/lab4redo/contact": "Contact",
+    "./": "Home",
+    "projects": "Projects",
+    "resume": "Resume",
+    "contact": "Contact",
 };
 
 let nav = document.createElement("nav");
