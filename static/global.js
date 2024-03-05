@@ -7,6 +7,7 @@ let pages = {
     "projects": "Projects",
     "resume": "Resume",
     "contact": "Contact",
+    // "github": "Github"
 };
 
 let nav = document.createElement("nav");
