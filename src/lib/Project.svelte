@@ -10,7 +10,7 @@
     export let hLevel = 2;
     let p = info;
 </script>
-<!-- <style>
+<style>
     .projects {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
@@ -27,7 +27,7 @@
             margin: 0;
             
         }   
-</style> -->
+</style>
 
 
 
