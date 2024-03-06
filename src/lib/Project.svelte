@@ -1,6 +1,6 @@
 <article>
-    <svelte:element this={"h" + hLevel}>{ p.title }</svelte:element>
-    <!-- <h2>{p.title}</h2> -->
+    <!-- <svelte:element this={"h" + hLevel}>{ p.title }</svelte:element> -->
+    <h2>{p.title}</h2>
     <img src={p.image} alt="">
     <p>{p.description}</p>
     
