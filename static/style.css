@@ -73,6 +73,20 @@ img {
 /* .projects article h2 {
   margin: 0; /* Avoid excessive spacing */
 /* */ 
+.projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+        }
+        .projects article {
+            display: grid;
+            grid-template-rows: subgrid; /* Use subgrid for horizontal alignment */
+            grid-row: span 3;
+        }
+
+        /* Ensure each article spans three rows */
+        .projects article h2 {
+            margin: 0;
+        }   
 
 h1 {
   font-size: 400%; /* Significantly larger than body text */

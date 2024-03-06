@@ -13,7 +13,7 @@
         <Project info={p} />
         {/each}
     </div>
-    <style> 
+    <!-- <style> 
         .projects {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
@@ -28,4 +28,4 @@
         .projects article h2 {
             margin: 0;
         }   
-    </style>
+    </style> -->
