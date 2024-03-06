@@ -7,7 +7,7 @@ let pages = {
     "projects": "Projects",
     "resume": "Resume",
     "contact": "Contact",
-    "github": "Github"
+    // "github": "Github"
 };
 
 let nav = document.createElement("nav");
@@ -17,7 +17,7 @@ for (let url in pages) {
     const ARE_WE_HOME = document.documentElement.classList.contains("home");
     let title = pages[url];
     let a = document.createElement("a");
-    a.href = url === "github" ? "https://github.com/riley-oh6" : url;
+    a.href = url;
     a.textContent = title;
 
     if (a.host === location.host && a.pathname === location.pathname) {
