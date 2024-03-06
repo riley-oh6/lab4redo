@@ -1,48 +1,47 @@
-function $$ (selector, context = document) {
+function $$(selector, context = document) {
     return Array.from(context.querySelectorAll(selector));
 }
-console.log("IT’S ALIVE!");
+console.log("IT'S ALIVE!");
 let pages = {
     "./": "Home",
     "projects": "Projects",
     "resume": "Resume",
     "contact": "Contact",
-    // "github": "Github"
+    "github": "Github"
 };
 
 let nav = document.createElement("nav");
 document.body.prepend(nav);
 
-
 for (let url in pages) {
-	const ARE_WE_HOME = document.documentElement.classList.contains("home");
-	// console.log(ARE_WE_HOME);
+    const ARE_WE_HOME = document.documentElement.classList.contains("home");
     let title = pages[url];
-    // url = ARE_WE_HOME && !url.startsWith("http") ? url : "../" + url;
     let a = document.createElement("a");
-    a.href = url;
+    a.href = url === "github" ? "https://github.com/riley-oh6" : url;
     a.textContent = title;
 
     if (a.host === location.host && a.pathname === location.pathname) {
         a.classList.add("active");
     }
 
-    if (a.host !== location.host) {
+    if (a.host !== location.host || url === "github") {
         a.target = "_blank";
     }
 
     nav.append(a);
 }
+
 document.body.insertAdjacentHTML("afterbegin", `
-	<label class="color-scheme" style="position: absolute; top: 40px; right: 0;">
-		Theme:
-		<select id = "themeSelect">
-			<option value="light dark">Automatic</option>
-			<option value="light">Light</option>
-			<option value="dark">Dark</option>
-		</select>
-	</label>`
+    <label class="color-scheme" style="position: absolute; top: 40px; right: 0;">
+        Theme:
+        <select id = "themeSelect">
+            <option value="light dark">Automatic</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </label>`
 );
+
 document.addEventListener('DOMContentLoaded', function() {
     const storedColorScheme = localStorage.getItem('colorScheme');
     const body = document.body;
@@ -66,7 +65,3 @@ select.addEventListener("input", function (event) {
     
     localStorage.setItem('colorScheme', colorScheme);
 });
-
-
-
-
