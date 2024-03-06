@@ -1,7 +1,7 @@
 <svelte:head>
 	<title>Contact me</title>
 </svelte:head>
-<body>
+
     <h1>Contact</h1>
     <form action="mailto:YOUR_EMAIL_ADDRESS" method="POST" enctype="text/plain">
         <label for="email">Email:
@@ -18,4 +18,3 @@
 
         <button>Submit</button>
     </form>
-</body>

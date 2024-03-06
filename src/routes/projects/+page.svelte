@@ -7,10 +7,7 @@
 	<title>Projects</title>
 </svelte:head>
 
-
-<body>
-    
-    <h1>{ projects.length } Projects</h1>
+<h1>{ projects.length } Projects</h1>
     <div class="projects">
         {#each projects as p}
         <Project info={p} />
@@ -30,7 +27,5 @@
         /* Ensure each article spans three rows */
         .projects article h2 {
             margin: 0;
-             Avoid excessive spacing
         }   
     </style>
-</body>

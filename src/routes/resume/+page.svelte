@@ -1,7 +1,7 @@
 <svelte:head>
 	<title>Resume</title>
 </svelte:head>
-<body>
+
     <article>
         <h1>Riley Oh's Resume</h1>
 
@@ -69,4 +69,4 @@
         </section>
 
     </article>
-</body>
+
