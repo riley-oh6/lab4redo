@@ -8,12 +8,15 @@
         { url: "./contact", title: "Contact" },
         { url: "https://github.com/YourGitHubUsername", title: "GitHub", external: true },
     ];
-    let colorScheme = "light dark";
+    
     let root = globalThis?.document?.documentElement;
-    $: root?.style.setProperty("color-scheme", colorScheme);
 
     let localStorage = globalThis.localStorage ?? {};
+    console.log(localStorage);
+    let colorScheme = localStorage.colorScheme ?? 'light dark';
     $: localStorage.colorScheme = colorScheme;
+    $: root?.style.setProperty("color-scheme", colorScheme);
+
     
 </script>
 
