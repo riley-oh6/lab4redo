@@ -1,8 +1,12 @@
+
 <article>
     <svelte:element this={"h" + hLevel}>{ p.title }</svelte:element>
-    <!-- <h2>{p.title}</h2> -->
     <img src={p.image} alt="">
-    <p>{p.description}</p>
+    <div>
+        <p>{p.description}</p>
+        <p class="year">c. {p.year}</p>
+    </div>
+    
     
 </article>
 <script>
@@ -27,7 +31,11 @@
             margin: 0;
             
         }   
+    .year {
+        font-style: italic; /* Example style */
+    }
 </style>
+
 
 
 
