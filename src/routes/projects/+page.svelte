@@ -7,19 +7,18 @@
     let query = "";
     let filteredProjects;
 
-    // Define pieData outside the block
-    let pieData = [];
+    
 
     let selectedYearIndex = -1;
     let selectedYear;
+    $: filteredProjects = projects.filter(project => {
+        let values = Object.values(project).join("\n").toLowerCase();
+        return values.includes(query.toLowerCase());
+    });
 
+    let pieData;
     $: {
-        filteredProjects = projects.filter((project) => {
-            let values = Object.values(project).join("\n").toLowerCase();
-            return values.includes(query.toLowerCase());
-        });
-
-        // Calculate rolledData and pieData based on filteredProjects
+        pieData = {};
         let rolledData = d3.rollups(
             filteredProjects,
             (v) => v.length,
@@ -48,7 +47,7 @@
     <title>Projects</title>
 </svelte:head>
 
-<h1>{filteredProjects.length} Projects</h1>
+<h1>{filteredByYear.length} Projects</h1>
 
 <Pie data={pieData} bind:selectedIndex={selectedYearIndex} />
 <input

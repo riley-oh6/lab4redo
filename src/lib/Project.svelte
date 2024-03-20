@@ -1,10 +1,10 @@
 
 <article>
-    <svelte:element this={"h" + hLevel}>{ p.title }</svelte:element>
-    <img src={p.image} alt="">
+    <svelte:element this={"h" + hLevel}>{ info.title }</svelte:element>
+    <img src={info.image} alt="">
     <div>
-        <p>{p.description}</p>
-        <p class="year">c. {p.year}</p>
+        <p>{info.description}</p>
+        <p class="year">c. {info.year}</p>
     </div>
     
     
