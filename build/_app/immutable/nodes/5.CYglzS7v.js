@@ -1,0 +1,1 @@
+import{i as s,c as o,o as p,e as r}from"../chunks/disclose-version.CO_dDP94.js";import{p as i,a as f}from"../chunks/runtime.ydBjxQlf.js";var m=r("<h1>Meta</h1> <p>this page includes stats about the code of this website.</p>",!0);function u(a,e){f(e,!1),s();var t=p(a,!0,m);o(a,t),i()}export{u as component};

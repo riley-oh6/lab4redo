@@ -1,0 +1,90 @@
+:root {
+  --color-accent: #7b726f; /* Replace with your desired accent color */
+}
+
+html {
+  accent-color: var(--color-accent);
+}
+
+body {
+    /* Set line height to 1.5 times the font size
+       and use the OS’s UI font as the website font
+     */
+    font: 100%/1.5 system-ui;
+    max-width: 100ch;
+    margin-inline: max(1em, (100% - 100ch) / 2);
+
+   }
+
+nav {
+    display: flex;
+    margin-bottom: 3ch;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: oklch(80% 3% 200);
+}
+
+nav a {
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    padding: 0.5em;
+}
+
+nav a.active {
+    border-bottom: 0.4em solid oklch(80% 3% 200);
+    padding-bottom: 0em;
+}
+
+nav a:hover {
+  border-bottom: 0.4em solid var(--color-accent); 
+  padding-bottom: 0em;
+}
+
+
+
+label, input, textarea, select {
+  /* Make these elements behave like block elements,
+     i.e., occupy the whole available width and create line breaks before and after
+  */
+  display: grid;
+  grid-template-columns: subgrid; /* Use subgrid for labels */
+  margin-top: 1em;
+  grid-column: 1 / -1; /* Span the whole row */
+}
+
+img {
+  width: 100%;
+}
+
+.projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+        }
+        .projects article {
+            display: grid;
+            grid-template-rows: subgrid; /* Use subgrid for horizontal alignment */
+            grid-row: span 3;
+        }
+
+        /* Ensure each article spans three rows */
+        .projects article h2 {
+            margin: 0;
+        }   
+
+h1 {
+  font-size: 400%; /* Significantly larger than body text */
+  line-height: 1.1; /* Default line height for h1 */
+  text-wrap: balance; /* Prevent uneven lines */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.5em; 
+  /* Add some spacing below headings */
+}
+
+
+
+
+

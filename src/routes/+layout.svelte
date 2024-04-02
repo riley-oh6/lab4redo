@@ -7,6 +7,7 @@
         { url: "./resume", title: "Resume" },
         { url: "./contact", title: "Contact" },
         { url: "https://github.com/YourGitHubUsername", title: "GitHub", external: true },
+        { url: "./meta", title: "Meta"}
     ];
     
     let root = globalThis?.document?.documentElement;
