@@ -38,7 +38,6 @@ declare module '$env/static/private' {
 	export const CONDA_SHLVL: string;
 	export const TERM_PROGRAM_VERSION: string;
 	export const CONDA_PROMPT_MODIFIER: string;
-	export const NODE_OPTIONS: string;
 	export const MallocNanoZone: string;
 	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
 	export const COLOR: string;
@@ -56,7 +55,6 @@ declare module '$env/static/private' {
 	export const npm_package_json: string;
 	export const _: string;
 	export const LaunchInstanceID: string;
-	export const VSCODE_INSPECTOR_OPTIONS: string;
 	export const XML_CATALOG_FILES: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_init_module: string;
@@ -138,7 +136,6 @@ declare module '$env/dynamic/private' {
 		CONDA_SHLVL: string;
 		TERM_PROGRAM_VERSION: string;
 		CONDA_PROMPT_MODIFIER: string;
-		NODE_OPTIONS: string;
 		MallocNanoZone: string;
 		ORIGINAL_XDG_CURRENT_DESKTOP: string;
 		COLOR: string;
@@ -156,7 +153,6 @@ declare module '$env/dynamic/private' {
 		npm_package_json: string;
 		_: string;
 		LaunchInstanceID: string;
-		VSCODE_INSPECTOR_OPTIONS: string;
 		XML_CATALOG_FILES: string;
 		npm_config_userconfig: string;
 		npm_config_init_module: string;
