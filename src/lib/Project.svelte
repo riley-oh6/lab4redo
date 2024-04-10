@@ -6,7 +6,7 @@
         <p>{info.description}</p>
         <p class="year">c. {info.year}</p>
         {#if info.url}
-            <a href={info.url} target="_blank" rel="noopener noreferrer">Visit Project</a>
+            <a href={info.url} target="_blank">Visit Project</a>
         {/if}
     </div>
     
