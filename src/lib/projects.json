@@ -70,5 +70,11 @@
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "year": "2024",
         "description": "Currently helping to create a multimodal machine learning model for flood prediction."
+    },
+    {
+        "title": "Blue Bike Traffic Visualization",
+        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "year": "2024",
+        "url": "riley-oh6.github.io/lab8"
     }
 ]
