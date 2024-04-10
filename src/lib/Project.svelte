@@ -17,6 +17,7 @@
     export let hLevel = 2;
     let p = info;
 </script>
+
 <style>
     .projects {
             display: grid;
