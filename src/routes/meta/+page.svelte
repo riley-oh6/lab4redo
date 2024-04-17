@@ -2,17 +2,25 @@
     import * as d3 from "d3";
     import { onMount } from "svelte";
     import Pie from "$lib/Pie.svelte";
+    import {
+	computePosition,
+	autoPlacement,
+	offset,
+    } from '@floating-ui/dom';
+    import FileLines from './FileLines.svelte';
+    import Scrolly from "svelte-scrolly";
 
-
-
+    let myColors = d3.scaleOrdinal(d3.schemeTableau10);
     let data = [];
+    let commitTooltip;
     let commits = [];
     let numberOfFiles;
     let maxFileLength;
     let averageFileLength;
     let workByPeriod;
     let maxPeriod;
-    let dateExtent;
+
+
     let yScale;
     let xScale;
     let yAxisGridlines;
@@ -29,8 +37,24 @@
     usableArea.width = usableArea.right - usableArea.left;
     usableArea.height = usableArea.bottom - usableArea.top;
 
+
     let svg;
     let brushSelection; // Initialize brushSelection
+    let tooltipPosition = {x: 0, y: 0};
+
+    let commitProgress = 100;
+    let raceProgress = 100;
+    
+    let dateExtent;
+    let timeScale; 
+
+    let filteredCommits = [];
+    $: filteredCommits = commits.filter(commit => commit.datetime <= commitMaxTime);
+
+
+    let filteredLines = [];
+    $: filteredLines = data.filter(d => d.datetime <= commitMaxTime);
+    
     onMount(async () => {
         data = await d3.csv("loc.csv", row => ({
             ...row,
@@ -70,16 +94,20 @@
         maxPeriod = d3.greatest(workByPeriod, (d) => d[1])?.[0];
 
 
-
         dateExtent = d3.extent(commits, commit => (commit.datetime));
+        
         yScale = d3.scaleLinear()
             .domain([0, 24])  
             .range([usableArea.bottom, usableArea.top]);  
         xScale = d3.scaleTime()
-            .domain(dateExtent)
+            .domain(d3.extent(commits, commit => (commit.datetime)))
             .range([usableArea.left, usableArea.right])
             .nice();  
 
+        timeScale = d3.scaleTime()
+            .domain(dateExtent)
+            .range([0,100]);
+        
         yAxisGridlines = d3.scaleLinear()
             .domain([0, 24])  
             .range([usableArea.bottom, usableArea.top]);  
@@ -90,30 +118,27 @@
             d3.axisLeft(yScale)
             .tickFormat("")
             .tickSize(-usableArea.width)
-        );
-
-        // Create brush and attach it to SVG
+        ); 
 
     });
 
     let hoveredIndex = -1;
-    $: hoveredCommit = commits[hoveredIndex] ?? {};
+    $: hoveredCommit = filteredCommits[hoveredIndex] ?? {};
     let cursor = {x: 0, y: 0};
-    
-    
+    let selectedCommits = [];
     function brushed (evt) {
-        brushSelection = evt.selection;
+        let brushSelection = evt.selection;
+        selectedCommits = !brushSelection ? [] : filteredCommits.filter(commit => {
+            let min = {x: brushSelection[0][0], y: brushSelection[0][1]};
+            let max = {x: brushSelection[1][0], y: brushSelection[1][1]};
+            let x = xScale(commit.date);
+            let y = yScale(commit.hourFrac);
+            return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+        });
     }
 
-    function isCommitSelected (commit) {
-        if (!brushSelection) {
-            return false;
-        }
-        let min = {x: brushSelection[0][0], y: brushSelection[0][1]};
-        let max = {x: brushSelection[1][0], y: brushSelection[1][1]};
-        let x = xScale(commit.date);
-        let y = yScale(commit.hourFrac);
-        return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+    function isCommitSelected(commit) {
+	    return selectedCommits.includes(commit);
     }
     $: {
 	    d3.select(svg).call(d3.brush().on("start brush end", brushed));
@@ -122,52 +147,54 @@
     }
     
     $: selectedCommits = brushSelection ? commits.filter(isCommitSelected) : [];
-    $: hasSelection = brushSelection && selectedCommits.length > 0;
+    $: hasSelection = selectedCommits.length > 0;
 
-    $: selectedLines = (hasSelection ? selectedCommits : commits).flatMap(d => d.lines);
+    $: selectedLines = (hasSelection ? selectedCommits : filteredCommits).flatMap(d => d.lines);
 
     $: totalLines = selectedLines.length;
     $: languageBreakdown = d3.rollup(selectedLines, D => D.length, d => d.type);
-</script>
 
+    let commitMaxTime;
+    $: {
+        if (timeScale) {
+            commitMaxTime = timeScale.invert(commitProgress);
+        }
+    }
 
-<svg viewBox="0 0 {width} {height}" bind:this={svg}>
-    <g transform="translate(0, {usableArea.bottom})" id="xAxis" />
-    <g class="gridlines" transform="translate({usableArea.left}, 0)" id="yAxisGridlines" bind:this={yAxisGridlines} />
-    <g transform="translate({usableArea.left}, 0)" id="yAxis" />
+    let commitMaxTime2;
+    $: {
+        if (timeScale) {
+            commitMaxTime2 = timeScale.invert(raceProgress);
+        }
+    }
 
-    <g class="dots">
-        {#each commits as commit, index}
-        <circle
-            fill="steelblue"
-            class:selected={isCommitSelected(commit)}
-            cx={xScale(commit.datetime)}
-            cy={yScale(commit.hourFrac)}
-            r="5"
-            on:mouseenter={evt => hoveredIndex = index}
-            on:mouseleave={evt => hoveredIndex = -1}
-            on:mouseenter={evt => {
-                hoveredIndex = index;
-                cursor = { x: evt.x, y: evt.y };
-            }}
-        />
     
-        {/each}
-    </g>
-</svg>
 
-<p>{hasSelection ? selectedCommits.length : "No"} commits selected</p>
+    async function dotInteraction (index, evt) {
+        let hoveredDot = evt.target;
+        if (evt.type === "mouseenter" || evt.type === "focus") {
+	        hoveredIndex = index;
+            cursor = { x: evt.x, y: evt.y };
+            tooltipPosition = await computePosition(hoveredDot, commitTooltip, {
+                strategy: "fixed", // because we use position: fixed
+                middleware: [
+                    offset(5), // spacing from tooltip to dot
+                    autoPlacement() // see https://floating-ui.com/docs/autoplacement
+                ],
+            });
 
-
-<dl>
-    {#each languageBreakdown as [language, lines] }
-        <dt> <strong>{language}</strong>: {lines} ({d3.format(".1~%")(lines / totalLines)}) </dt>
-    {/each} 
-</dl>
-
-<Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} />
-
-
+        }
+        else if (evt.type === "mouseleave" || evt.type === "blur") {
+	       hoveredIndex = -1;
+        } else if (evt.type === 'click' || (evt.type === 'keyup' && evt.type === 'Enter')){
+            selectedCommits = [filteredCommits[index]];
+        }
+    }
+    
+    $: radiusScale = d3.scaleLinear()
+	.domain(d3.extent(filteredCommits, commit => commit.totalLines))
+	.range([5, 20]);
+</script>
 
 <h1>
     Meta
@@ -179,10 +206,10 @@
 
 <dl class="stats">
     <dt>Total <abbr title="Lines of code">LOC</abbr></dt>
-    <dd>{data.length}</dd>
+    <dd>{filteredLines.length}</dd>
 
     <dt>Total commits</dt>
-    <dd>{commits.length}</dd>
+    <dd>{filteredCommits.length}</dd>
 
     <dt>Total number of files</dt>
     <dd>{numberOfFiles}</dd>
@@ -197,7 +224,7 @@
     <dd>{maxPeriod}</dd>
 </dl>
 
-<dl id="commit-tooltip" class="info tooltip" hidden={hoveredIndex === -1 } style="top: {cursor.y}px; left: {cursor.x}px">
+<dl id="commit-tooltip" bind:this={commitTooltip} class="info tooltip" hidden={hoveredIndex === -1 } style="top: {tooltipPosition.y}px; left: {tooltipPosition.x}px">
 	<dt>Commit</dt>
 	<dd><a href="{ hoveredCommit.url }" target="_blank">{ hoveredCommit.id }</a></dd>
 
@@ -217,6 +244,67 @@
 
 
 
+<Scrolly bind:progress={commitProgress}>
+	{#each commits as commit, index }
+        <p>
+            As I delved into the codebase, each commit became a milestone, a testament to progress. The journey began with {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})}, crafting a foundation that would soon blossom. Over time, these commits grew in number and significance, shaping the evolution of our project.
+
+With this commit, I forged {commit.totalLines} lines of code, weaving functionality and purpose into every file. The complexity unfolded across {d3.rollups(commit.lines, D => D.length, d => d.file).length} files, a testament to the depth of our work.
+
+But it wasn’t just about lines of code; it was about the meticulous craftsmanship embedded in each commit. Every edit was a brushstroke, adding layers of functionality and refinement. As the codebase flourished, so did my understanding of its intricacies. After this, I had done {index + 1} commits.
+        </p>
+    {/each}
+	<svelte:fragment slot="viz">
+        <Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} />
+        <svg viewBox="0 0 {width} {height}" bind:this={svg}>
+            <g transform="translate(0, {usableArea.bottom})" id="xAxis" />
+            <g class="gridlines" transform="translate({usableArea.left}, 0)" id="yAxisGridlines" bind:this={yAxisGridlines} />
+            <g transform="translate({usableArea.left}, 0)" id="yAxis" />
+        
+            <g class="dots">
+                {#each filteredCommits as commit, index (commit.id) }
+                <circle
+                    fill="steelblue"
+                    class:selected={isCommitSelected(commit)}
+                    cx={xScale(commit.datetime)}
+                    cy={yScale(commit.hourFrac)}
+                    r={radiusScale(commit.totalLines)}
+                    on:mouseenter={evt => dotInteraction(index, evt)}
+                    on:mouseleave={evt => dotInteraction(index, evt)}
+                    tabindex="0"
+                    aria-describedby="commit-tooltip"
+                    role="tooltip"
+                    aria-haspopup="true"
+                    on:focus={evt => dotInteraction(index, evt)}
+                    on:blur={evt => dotInteraction(index, evt)}
+                    on:click={evt => dotInteraction(index, evt)}
+                    on:keyup={evt => dotInteraction(index, evt)}
+                    fill-opacity="75%"
+                />
+            
+                {/each}
+            </g>
+        </svg>
+		
+            
+	</svelte:fragment>
+</Scrolly>
+
+
+<Scrolly bind:progress={raceProgress} --scrolly-layout="viz-first" --scrolly-viz-width="1.5fr" throttle=500 debounce=20>
+	{#each commits as commit, index }
+        <p>
+            As I delved into the codebase, each commit became a milestone, a testament to progress. The journey began with {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})}, crafting a foundation that would soon blossom. Over time, these commits grew in number and significance, shaping the evolution of our project.
+
+With this commit, I forged {commit.totalLines} lines of code, weaving functionality and purpose into every file. The complexity unfolded across {d3.rollups(commit.lines, D => D.length, d => d.file).length} files, a testament to the depth of our work.
+
+But it wasn’t just about lines of code; it was about the meticulous craftsmanship embedded in each commit. Every edit was a brushstroke, adding layers of functionality and refinement. As the codebase flourished, so did my understanding of its intricacies. After this, I had done {index + 1} commits.
+        </p>
+    {/each}
+	<svelte:fragment slot="viz">
+        <FileLines lines={filteredLines} colors={myColors}/>
+	</svelte:fragment>
+</Scrolly>
 
 <style>
     .stats {
@@ -277,7 +365,9 @@
     }
 
     
-
+    @starting-style {
+	    r: 0;
+    }   
 
     .tooltip {
         position: fixed;
@@ -323,5 +413,25 @@
     dl dt span {
         font-weight: normal;
         color: #888;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        flex: 1;
+    }
+
+    time {
+        text-align: center;
+    }
+
+    :global(body){
+        max-width: min(120ch, 80vw);
     }
 </style>
