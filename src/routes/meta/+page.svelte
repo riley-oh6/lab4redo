@@ -31,7 +31,7 @@
 
 
     onMount(async () => {
-        data = await d3.csv("loc2.csv", row => ({
+        data = await d3.csv("loc3.csv", row => ({
             ...row,
             line: Number(row.line), // or just +row.line
             depth: Number(row.depth),
